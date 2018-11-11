@@ -1,0 +1,29 @@
+version: '3'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: spark_zookeeper
+    expose:
+      - "2181"
+  kafka:
+    image: wurstmeister/kafka
+    container_name: spark_kafka
+    depends_on:
+      - zookeeper
+    expose:
+      - "9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CREATE_TOPICS: "test:1:1"
+  spark:
+    image: gettyimages/spark:2.3.0-hadoop-2.8
+    container_name: spark_master
+    depends_on:
+      - kafka
+    ports:
+      - "4040:4040"
+      - "4041:4041"
+      - "4042:4042"
+

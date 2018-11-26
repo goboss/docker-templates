@@ -20,10 +20,27 @@ services:
   spark:
     image: gettyimages/spark:2.3.0-hadoop-2.8
     container_name: spark_master
-    depends_on:
-      - kafka
+    volumes:
+      - spark_home:/usr/spark-2.3.0
+      - hadoop_home:/usr/hadoop-2.8.3
     ports:
       - "4040:4040"
       - "4041:4041"
       - "4042:4042"
-
+  zeppelin:
+    image: apache/zeppelin:0.8.0
+    container_name: spark_zeppelin
+    depends_on:
+      - spark
+    volumes:
+      - spark_home:/usr/spark
+      - hadoop_home:/usr/hadoop
+      - ./conf/zeppelin:/zeppelin/conf
+    ports:
+      - "8080:8080"
+      - "14040:4040"
+      - "14041:4041"
+      - "14042:4042"
+volumes:
+  spark_home:
+  hadoop_home:
